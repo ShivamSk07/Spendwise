@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - SpendWise{% endblock %}
+
+{% block content %}
+<style>
+    .profile-header-card {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .profile-img-large {
+        width: 100px;
+        height: 100px;
+        border-radius: 20px;
+        border: 4px solid var(--border-light);
+        box-shadow: var(--shadow);
+        object-fit: cover;
+    }
+
+    .profile-username-header {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+</style>
+
+<div class="page-header">
+    <h1>Account Settings</h1>
+</div>
+
+<div class="modern-card" style="max-width: 800px; margin: 0 auto;">
+    <div class="profile-header-card">
+        {% if user.profile.image and user.profile.image.name != 'default.jpg' %}
+        <img src="{{ user.profile.image.url }}" alt="Profile" class="profile-img-large">
+        {% else %}
+        <img src="https://ui-avatars.com/api/?name={% if user.first_name %}{{ user.first_name }}+{{ user.last_name }}{% else %}{{ user.username }}{% endif %}&background=0284c7&color=fff&rounded=true&bold=true&size=128"
+            alt="Profile" class="profile-img-large">
+        {% endif %}
+        <div>
+            <h2 class="profile-username-header">{{ user.username }}</h2>
+            <p style="color: var(--text-muted); font-weight: 500;">Member since {{ user.date_joined|date:"F Y" }}</p>
+        </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="form-group">
+                <label for="id_username">Username</label>
+                {{ u_form.username }}
+            </div>
+            <div class="form-group">
+                <label for="id_email">Email Address</label>
+                {{ u_form.email }}
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="form-group">
+                <label for="id_first_name">First Name</label>
+                {{ u_form.first_name }}
+            </div>
+            <div class="form-group">
+                <label for="id_last_name">Last Name</label>
+                {{ u_form.last_name }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="id_image">Profile Picture</label>
+            {{ p_form.image }}
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">Upload a new profile picture.
+                Recommended size: 200x200px.</p>
+        </div>
+
+        <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end;">
+            <a href="{% url 'dashboard' %}" class="btn btn-outline">Cancel</a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-check"></i> Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="modern-card" style="max-width: 800px; margin: 2rem auto; border-color: var(--danger-bg);">
+    <h3 style="color: var(--danger); font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem;">Danger Zone</h3>
+    <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">Once you delete your account, there
+        is no going back. Please be certain.</p>
+    <button class="btn btn-outline" style="color: var(--danger); border-color: var(--danger); opacity: 0.8;" disabled>
+        Delete Account
+    </button>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% if edit_mode %}Edit Expense{% else %}Add Expense{% endif %} | SpendWise
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{% if edit_mode %}Edit Transaction{% else %}New Transaction{% endif %}</h1>
+    <a href="{% url 'expense_list' %}" class="btn btn-outline" style="font-size: 0.85rem;">
+        Back to list
+    </a>
+</div>
+
+<div style="max-width: 600px;">
+    <div class="modern-card">
+        <form method="post">
+            {% csrf_token %}
+
+            <div style="display: flex; gap: 1.5rem; margin-bottom: 1.5rem;">
+                <div class="form-group" style="flex: 1; margin: 0;">
+                    <label for="{{ form.date.id_for_label }}">Date</label>
+                    {{ form.date }}
+                    {% if form.date.errors %}
+                    <div style="color: var(--danger); font-size: 0.8rem; margin-top: 0.5rem; font-weight: 500;">{{
+                        form.date.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group" style="flex: 1; margin: 0;">
+                    <label for="{{ form.category.id_for_label }}">Category</label>
+                    {{ form.category }}
+                    {% if form.category.errors %}
+                    <div style="color: var(--danger); font-size: 0.8rem; margin-top: 0.5rem; font-weight: 500;">{{
+                        form.category.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.amount.id_for_label }}">Amount (₹)</label>
+                {{ form.amount }}
+                {% if form.amount.errors %}
+                <div style="color: var(--danger); font-size: 0.8rem; margin-top: 0.5rem; font-weight: 500;">{{
+                    form.amount.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group" style="margin-bottom: 2.5rem;">
+                <label for="{{ form.description.id_for_label }}">Description</label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                <div style="color: var(--danger); font-size: 0.8rem; margin-top: 0.5rem; font-weight: 500;">{{
+                    form.description.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary" style="flex: 1;">
+                    {% if edit_mode %}Save Changes{% else %}Save Transaction{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if edit_mode %}
+    <div style="text-align: center; margin-top: 1rem;">
+        <form action="{% url 'delete_expense' expense.pk %}" method="post"
+            onsubmit="return confirm('Delete this record permanently?');">
+            {% csrf_token %}
+            <button type="submit"
+                style="background: none; border: none; color: var(--danger); font-size: 0.9rem; font-weight: 500; cursor: pointer;">Delete
+                this transaction</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

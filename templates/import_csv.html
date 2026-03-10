@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Import CSV | SpendWise{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Import Data</h1>
+    <a href="{% url 'expense_list' %}" class="btn btn-outline" style="font-size: 0.85rem;">Cancel</a>
+</div>
+
+<div style="max-width: 500px;">
+    <div class="modern-card">
+
+        <div style="margin-bottom: 2rem;">
+            <p style="color: var(--text-primary); font-weight: 500; margin-bottom: 0.5rem;">Upload a CSV file containing
+                your expenses.</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">The system requires the following
+                exact header column format: <br>
+                <span
+                    style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: var(--bg-base); padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 0.5rem; border: 1px solid var(--border-light); font-size: 0.8rem; color: var(--text-primary);">date,
+                    category, description, amount</span>
+            </p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group" style="margin-bottom: 2rem;">
+                <label>File Selection</label>
+                <input type="file" name="csv_file" accept=".csv" class="form-control" required
+                    style="padding: 1rem; border: 1px dashed var(--border-light); cursor: pointer; background: var(--bg-base);">
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                Import Operations
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

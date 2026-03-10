@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard | SpendWise{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Overview</h1>
+    <a href="{% url 'add_expense' %}" class="btn btn-primary">
+        New Expense <i class="fa-solid fa-plus" style="font-size: 0.8rem;"></i>
+    </a>
+</div>
+
+<div class="dashboard-grid" style="grid-template-columns: repeat(3, 1fr);">
+    <div class="stat-card">
+        <h3>Total Spent</h3>
+        <div class="amount">₹ {{ total_spent|floatformat:2 }}</div>
+        <div
+            style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span
+                style="display: inline-block; width: 6px; height: 6px; background: var(--text-primary); border-radius: 50%;"></span>
+            This Month
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <h3>Remaining Budget</h3>
+        {% widthratio total_spent budget.amount 100 as percentage_raw %}
+        <div class="amount"
+            style="{% if exceeded or percentage_raw|add:0 >= 80 %}color: var(--danger);{% else %}color: var(--success);{% endif %}">
+            ₹ {{ remaining|floatformat:2 }}
+        </div>
+        <div
+            style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            {% if exceeded %}
+            <span
+                style="color: var(--danger); background: var(--danger-bg); padding: 2px 6px; border-radius: 4px; font-weight: 500; font-size: 0.75rem;">Exceeded</span>
+            {% elif percentage_raw|add:0 >= 80 %}
+            <span
+                style="color: var(--danger); background: var(--danger-bg); padding: 2px 6px; border-radius: 4px; font-weight: 500; font-size: 0.75rem;">Low
+                Budget</span>
+            {% else %}
+            <span
+                style="color: var(--success); background: var(--success-bg); padding: 2px 6px; border-radius: 4px; font-weight: 500; font-size: 0.75rem;">On
+                Track</span>
+            {% endif %}
+            of ₹ {{ budget.amount|floatformat:2 }} total
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <h3>Budget Utilization</h3>
+        {% widthratio total_spent budget.amount 100 as percentage %}
+        <div class="amount">{{ percentage|default:0 }}%</div>
+        <div style="margin-top: 1rem; height: 6px; background: var(--bg-base); border-radius: 6px; overflow: hidden;">
+            <div
+                style="height: 100%; width: {% if percentage|add:0 > 100 %}100{% else %}{{ percentage|default:0 }}{% endif %}%; background: {% if exceeded %}var(--danger){% else %}var(--success){% endif %}; border-radius: 6px;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-grid" style="grid-template-columns: 2fr 1fr; align-items: start;">
+    <div class="modern-card" style="margin-bottom: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h2
+                style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">
+                Recent Transactions</h2>
+            <a href="{% url 'expense_list' %}" class="btn btn-outline btn-sm">View all</a>
+        </div>
+
+        <div class="table-responsive">
+            {% if recent_expenses %}
+            <table style="border: none;">
+                <thead>
+                    <tr>
+                        <th style="background: var(--bg-surface); padding-left: 1rem;">Date</th>
+                        <th style="background: var(--bg-surface);">Category</th>
+                        <th style="background: var(--bg-surface);">Description</th>
+                        <th style="background: var(--bg-surface); text-align: right; padding-right: 1rem;">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for exp in recent_expenses %}
+                    <tr>
+                        <td style="color: var(--text-muted); font-size: 0.9rem; padding-left: 1rem; width: 120px;">
+                            {{ exp.date|date:"M d" }}</td>
+                        <td style="width: 140px;">
+                            <span
+                                style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">
+                                {% if exp.category == 'Food' %}<i class="fa-solid fa-utensils"
+                                    style="opacity: 0.5;"></i>
+                                {% elif exp.category == 'Travel' %}<i class="fa-solid fa-car" style="opacity: 0.5;"></i>
+                                {% elif exp.category == 'Utilities' %}<i class="fa-solid fa-bolt"
+                                    style="opacity: 0.5;"></i>
+                                {% elif exp.category == 'Entertainment' %}<i class="fa-solid fa-film"
+                                    style="opacity: 0.5;"></i>
+                                {% elif exp.category == 'Health' %}<i class="fa-solid fa-kit-medical"
+                                    style="opacity: 0.5;"></i>
+                                {% else %}<i class="fa-solid fa-tag" style="opacity: 0.5;"></i>{% endif %}
+                                {{exp.category}}
+                            </span>
+                        </td>
+                        <td style="font-weight: 500; font-size: 0.95rem;">{{exp.description}}</td>
+                        <td
+                            style="font-weight: 600; text-align: right; font-size: 1rem; color: var(--text-primary); padding-right: 1rem;">
+                            ₹ {{exp.amount|floatformat:2}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div style="text-align: center; padding: 4rem 2rem; color: var(--text-muted);">
+                <p style="font-size: 0.95rem; margin-bottom: 1rem;">No transactions this month.</p>
+                <a href="{% url 'add_expense' %}" class="btn btn-outline btn-sm">Record first expense</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="modern-card" style="margin-bottom: 0;">
+        <h2
+            style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin: 0 0 2rem 0; text-transform: uppercase; letter-spacing: 0.5px;">
+            Distribution</h2>
+
+        {% if categories_data %}
+        <div style="position: relative; height: 260px; width: 100%;">
+            <canvas id="expenseChart"></canvas>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const ctx = document.getElementById('expenseChart').getContext('2d');
+                const styles = getComputedStyle(document.documentElement);
+                const textMuted = styles.getPropertyValue('--text-muted').trim();
+                const textPrimary = styles.getPropertyValue('--text-primary').trim();
+                const bgSurface = styles.getPropertyValue('--bg-surface').trim();
+                const borderLight = styles.getPropertyValue('--border-light').trim();
+                const primary = styles.getPropertyValue('--primary').trim();
+
+                Chart.defaults.color = textMuted;
+                Chart.defaults.font.family = "'Inter', sans-serif";
+
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: [{% for item in categories_data %}'{{ item.category }}',{% endfor %}],
+                datasets: [{
+                    data: [{% for item in categories_data %}{{ item.total }}, {% endfor %}],
+                backgroundColor: [
+                primary,
+                '#3b82f6',
+                '#8b5cf6',
+                '#ec4899',
+                '#f59e0b',
+                '#10b981',
+                '#6366f1'
+            ],
+                borderWidth: 2,
+                borderColor: bgSurface,
+                hoverOffset: 4
+                        }]
+                    },
+                options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '75%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            boxWidth: 8,
+                            font: { size: 12, weight: '600' },
+                            padding: 20,
+                            color: textMuted
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: bgSurface,
+                        titleColor: textPrimary,
+                        bodyColor: textPrimary,
+                        borderColor: borderLight,
+                        borderWidth: 1,
+                        padding: 12,
+                        displayColors: true,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function (context) { return ' ₹ ' + context.parsed.toFixed(2); }
+                        }
+                    }
+                }
+            }
+                });
+            });
+        </script>
+        {% else %}
+        <div
+            style="height: 260px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--text-muted); font-size: 0.95rem;">
+            <div
+                style="width: 120px; height: 120px; border-radius: 50%; border: 4px dashed var(--border-light); display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;">
+                <i class="fa-solid fa-chart-pie" style="opacity: 0.3; font-size: 1.5rem;"></i>
+            </div>
+            Data unavailable
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

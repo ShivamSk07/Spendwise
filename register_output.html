@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | SpendWise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="custom-bg"></div>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        
+
+        <!-- Main Content -->
+        <main class="main-content full-width">
+            
+
+            <div class="content-wrapper">
+                
+<div class="auth-wrapper" style="margin: 4rem auto;">
+    <div class="auth-header">
+        <h1>Create Account</h1>
+        <p>Start tracking your expenses effectively</p>
+    </div>
+
+    <div class="glass-card">
+        <form method="post">
+            <input type="hidden" name="csrfmiddlewaretoken" value="EE3V3Vof6RhOFd59TcpmuoYmkxaEzwuWYZZqrZFO69R1h2701Qa2wNNv08qRCmwI">
+
+            
+            <div class="form-group">
+                <label for="id_username">Username</label>
+                <input type="text" name="username" maxlength="150" autocapitalize="none" autocomplete="username" autofocus required aria-describedby="id_username_helptext" id="id_username">
+                
+            </div>
+            
+            <div class="form-group">
+                <label for="id_password1">Password</label>
+                <input type="password" name="password1" autocomplete="new-password" required aria-describedby="id_password1_helptext" id="id_password1">
+                
+            </div>
+            
+            <div class="form-group">
+                <label for="id_password2">Password confirmation</label>
+                <input type="password" name="password2" autocomplete="new-password" required aria-describedby="id_password2_helptext" id="id_password2">
+                
+            </div>
+            
+
+            <button type="submit" class="btn btn-primary"
+                style="width: 100%; justify-content: center; margin-top: 1rem;">
+                <i class="fa-solid fa-user-plus"></i> Register
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 2rem;">
+            <p style="color: var(--text-muted);">Already have an account? <a href="/login/"
+                    style="color: var(--primary); font-weight: 600; text-decoration: none;">Log In</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add form classes to django generated fields
+    document.querySelectorAll('input').forEach(input => {
+        if (input.type !== 'hidden') {
+            input.classList.add('form-control');
+        }
+    });
+</script>
+
+            </div>
+        </main>
+    </div>
+</body>
+</html>
+
